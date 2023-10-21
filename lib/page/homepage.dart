@@ -2,9 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:serumpun_sebalai/page/beranda.dart';
 import 'package:serumpun_sebalai/page/beritapage.dart';
 import 'package:serumpun_sebalai/page/data.dart';
+import 'package:serumpun_sebalai/page/data_test.dart';
 //import 'package:google_nav_bar/google_nav_bar.dart';
 
 class HomePage extends StatefulWidget {
+  static String id = 'HomeScreen';
   const HomePage({super.key});
 
   @override
@@ -23,6 +25,7 @@ class HomePageState extends State<HomePage> {
   final List<Widget> _pages = [
     const Beranda(),
     const Data(),
+    // DataTest(),
     const BeritaPage(),
   ];
 

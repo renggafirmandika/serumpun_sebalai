@@ -44,6 +44,12 @@ dependencies:
   dropdown_button2: ^2.3.8
   tutorial_coach_mark: ^1.2.9
   shared_preferences: ^2.2.0
+  introduction_screen: ^3.1.12
+  lottie: ^2.6.0
+  after_layout: ^1.2.0
+  http: ^1.1.0
+  syncfusion_flutter_datagrid: ^22.2.12
+  table_sticky_headers: ^2.0.5
 
 dev_dependencies:
   flutter_test:
