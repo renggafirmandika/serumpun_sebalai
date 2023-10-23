@@ -766,6 +766,7 @@ class _DataState extends State<Data> {
                                                 kontenData[i][j],
                                                 maxLines: 3,
                                                 overflow: TextOverflow.ellipsis,
+                                                textAlign: TextAlign.center,
                                               ),
                                             ),
                                           ],

@@ -1,0 +1,22 @@
+[
+    {
+        "id_fenomena": "2",
+        "judul_fenomena": "ggfshgshgs",
+        "fenomena": "hhgfshghgfsaas",
+        "bulan": "12",
+        "tahun": "2023",
+        "id_instansi": "2",
+        "created_at": "2023-10-23 14:52:26",
+        "created_by": null
+    },
+    {
+        "id_fenomena": "3",
+        "judul_fenomena": "dsadsa",
+        "fenomena": "dsads",
+        "bulan": "11",
+        "tahun": "2023",
+        "id_instansi": "2",
+        "created_at": "2023-10-23 17:33:22",
+        "created_by": null
+    }
+]
