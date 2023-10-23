@@ -1,5 +1,4 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
-import 'package:serumpun_sebalai/page/data.dart';
 
 class DataModel {
   factory DataModel.fromJson(Map<String, dynamic> jsonData) {

@@ -2,8 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:serumpun_sebalai/page/beranda.dart';
 import 'package:serumpun_sebalai/page/beritapage.dart';
 import 'package:serumpun_sebalai/page/data.dart';
-import 'package:serumpun_sebalai/page/data_test.dart';
-//import 'package:google_nav_bar/google_nav_bar.dart';
+import 'package:serumpun_sebalai/page/fenomenapage.dart';
 
 class HomePage extends StatefulWidget {
   static String id = 'HomeScreen';
@@ -25,6 +24,7 @@ class HomePageState extends State<HomePage> {
   final List<Widget> _pages = [
     const Beranda(),
     const Data(),
+    const FenomenaPage(),
     // DataTest(),
     const BeritaPage(),
   ];
@@ -43,6 +43,7 @@ class HomePageState extends State<HomePage> {
           ],
         ),
         child: BottomNavigationBar(
+          type: BottomNavigationBarType.fixed,
           items: const <BottomNavigationBarItem>[
             BottomNavigationBarItem(
               icon: Icon(Icons.home_outlined),
@@ -51,6 +52,10 @@ class HomePageState extends State<HomePage> {
             BottomNavigationBarItem(
               icon: Icon(Icons.table_chart_outlined),
               label: 'Data',
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.camera_alt_outlined),
+              label: 'Fenomena',
             ),
             BottomNavigationBarItem(
               icon: Icon(Icons.newspaper_outlined),

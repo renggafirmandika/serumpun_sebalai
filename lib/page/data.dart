@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:js_interop';
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
@@ -14,91 +13,257 @@ class Data extends StatefulWidget {
 }
 
 class _DataState extends State<Data> {
-  bool visibility = false;
+  bool isVisible = false;
   List data = [];
   List judulKolom = [];
   List judulBaris = [];
   String labelJudulBaris = "";
   List<List<String>> kontenData = [];
   var jsonData;
-  var jmlVerVar;
-  var jmlTurVar;
-  var jmlTahun;
-  var jmlTurTahun;
+  var jmlVerVar = 0;
+  var jmlTurVar = 0;
+  var jmlTahun = 0;
+  var jmlHorvar = 0;
+  var jmlTurTahun = 0;
+  String unit = "";
+  String judul = "";
+  String idData = "1026";
+  String kodeAPI = "1";
+
+  clearData() {
+    data.clear();
+    judulKolom.clear();
+    judulBaris.clear();
+    kontenData.clear();
+  }
 
   //get data
-  Future getData() async {
-    data.clear();
-    var response = await http.get(Uri.https('webapi.bps.go.id',
-        'v1/api/list/model/data/lang/ind/domain/1900/var/1026/key/d560dc954c0b8d1f71c2793d021d3f3d/'));
-    jsonData = jsonDecode(response.body);
+  Future getData(String id, String kodeAPI) async {
+    List _judulKolom = [];
+    List _judulBaris = [];
+    List<List<String>> _kontenData = [];
+    String _unit = "";
+    String _judul = "";
 
-    var idVar = jsonData["var"][0]["val"];
-    data.add(idVar);
+    if (kodeAPI == "1") {
+      var response = await http.get(Uri.https('webapi.bps.go.id',
+          'v1/api/list/model/data/lang/ind/domain/1900/var/$id/key/d560dc954c0b8d1f71c2793d021d3f3d/'));
 
-    var turVar = jsonData["turvar"] as List;
-    data.add(turVar);
+      var jsonData = jsonDecode(response.body);
 
-    jmlTurVar = turVar.length;
-    data.add(jmlTurVar);
+      var idVar = jsonData["var"][0]["val"];
+      data.add(idVar);
 
-    var labelVerVar = jsonData["labelvervar"];
-    labelJudulBaris = labelVerVar;
-    data.add(labelVerVar);
+      if (jsonData["var"][0]["unit"] != null) {
+        String unitData = jsonData["var"][0]["unit"].toString();
+        _unit = "($unitData)";
+      }
+      unit = _unit;
 
-    var verVar = jsonData["vervar"] as List;
-    data.add(verVar);
+      _judul = jsonData["var"][0]["label"].toString();
+      judul = _judul;
 
-    jmlVerVar = verVar.length;
-    data.add(jmlVerVar);
+      var turVar = jsonData["turvar"] as List;
+      data.add(turVar);
 
-    var tahun = jsonData["tahun"] as List;
-    data.add(tahun);
+      jmlTurVar = turVar.length;
+      data.add(jmlTurVar);
 
-    jmlTahun = tahun.length;
-    data.add(jmlTahun);
+      var labelVerVar = jsonData["labelvervar"];
+      labelJudulBaris = labelVerVar;
+      data.add(labelVerVar);
 
-    var turTahun = jsonData["turtahun"] as List;
-    data.add(jmlTurTahun);
+      var verVar = jsonData["vervar"] as List;
+      data.add(verVar);
 
-    jmlTurTahun = turTahun.length;
-    data.add(jmlTurTahun);
+      jmlVerVar = verVar.length;
+      data.add(jmlVerVar);
 
-    for (int i = 0; i < jmlTahun; i++) {
-      judulKolom.add(tahun[i]["label"]);
-    }
-    for (int i = 0; i < jmlVerVar; i++) {
-      judulBaris.add(verVar[i]["label"]);
-    }
+      var tahun = jsonData["tahun"] as List;
+      data.add(tahun);
 
-    // for (int i = 0; i < jmlTahun; i++) {
-    //   final List<String> row = [];
-    //   for (int j = 0; j < jmlVerVar; j++) {
-    //     row.add('Baris $j, Kolom $i');
-    //   }
-    //   kontenData.add(row);
-    // }
+      jmlTahun = tahun.length;
+      data.add(jmlTahun);
 
-    for (int i = 0; i < jmlTahun; i++) {
-      final List<String> row = [];
-      for (int j = 0; j < jmlVerVar; j++) {
-        for (int k = 0; k < jmlTurVar; k++) {
-          for (int l = 0; l < jmlTurTahun; l++) {
-            final iddata = jsonData["vervar"][j]["val"].toString() +
-                idVar.toString() +
-                jsonData["turvar"][k]["val"].toString() +
-                jsonData["tahun"][i]["val"].toString() +
-                jsonData["turtahun"][l]["val"].toString();
-            final data = jsonData["datacontent"][iddata] != ""
-                ? jsonData["datacontent"][iddata]
-                : '-';
-            row.add(data.toString());
+      var turTahun = jsonData["turtahun"] as List;
+      data.add(jmlTurTahun);
+
+      jmlTurTahun = turTahun.length;
+      data.add(jmlTurTahun);
+
+      for (int i = 0; i < jmlTahun; i++) {
+        _judulKolom.add(tahun[i]["label"]);
+      }
+      for (int i = 0; i < jmlVerVar; i++) {
+        _judulBaris.add(verVar[i]["label"]);
+      }
+
+      // for (int i = 0; i < jmlTahun; i++) {
+      //   final List<String> row = [];
+      //   for (int j = 0; j < jmlVerVar; j++) {
+      //     row.add('Baris $j, Kolom $i');
+      //   }
+      //   kontenData.add(row);
+      // }
+
+      for (int i = 0; i < jmlTahun; i++) {
+        final List<String> row = [];
+        for (int j = 0; j < jmlVerVar; j++) {
+          for (int k = 0; k < jmlTurVar; k++) {
+            for (int l = 0; l < jmlTurTahun; l++) {
+              final iddata = jsonData["vervar"][j]["val"].toString() +
+                  idVar.toString() +
+                  jsonData["turvar"][k]["val"].toString() +
+                  jsonData["tahun"][i]["val"].toString() +
+                  jsonData["turtahun"][l]["val"].toString();
+              final data = (jsonData["datacontent"][iddata] != null)
+                  ? jsonData["datacontent"][iddata]
+                  : '-';
+              row.add(data.toString());
+            }
           }
         }
+        _kontenData.add(row);
       }
-      kontenData.add(row);
+      judulBaris = _judulBaris;
+      judulKolom = _judulKolom;
+      kontenData = _kontenData;
+    } else {
+      var response = await http.get(Uri.https(
+          'webapps.bps.go.id', 'babel/api_ssebalai/services/tabelData/$id'));
+
+      var jsonData = jsonDecode(response.body);
+
+      var idVar = jsonData["var"][0]["id_tabel"];
+      data.add(idVar);
+
+      // if (jsonData["var"][0]["unit"] != null) {
+      //   String unitData = jsonData["var"][0]["unit"].toString();
+      //   _unit = "($unitData)";
+      // }
+      _unit = "";
+      unit = _unit;
+
+      _judul = jsonData["var"][0]["nama_tabel"].toString();
+      judul = _judul;
+
+      // var turVar = jsonData["turvar"] as List;
+      // data.add(turVar);
+
+      // jmlTurVar = turVar.length;
+      // data.add(jmlTurVar);
+
+      var labelVerVar = jsonData["label_vervar"][0]["label_vervar"];
+      // var labelVerVar = "Judul Vertikal Variabel";
+      labelJudulBaris = labelVerVar;
+      data.add(labelVerVar);
+
+      var verVar = jsonData["ver_var"] as List;
+      data.add(verVar);
+
+      jmlVerVar = verVar.length;
+      data.add(jmlVerVar);
+
+      var horVar = jsonData["hor_var"] as List;
+      data.add(horVar);
+
+      jmlHorvar = horVar.length;
+      data.add(jmlHorvar);
+
+      //var turTahun = jsonData["turtahun"] as List;
+      // data.add(jmlTurTahun);
+
+      // jmlTurTahun = turTahun.length;
+      // data.add(jmlTurTahun);
+
+      for (int i = 0; i < jmlHorvar; i++) {
+        _judulKolom.add(horVar[i]["nama_horvar"]);
+      }
+      for (int i = 0; i < jmlVerVar; i++) {
+        _judulBaris.add(verVar[i]["nama_vervar"]);
+      }
+
+      // for (int i = 0; i < jmlTahun; i++) {
+      //   final List<String> row = [];
+      //   for (int j = 0; j < jmlVerVar; j++) {
+      //     row.add('Baris $j, Kolom $i');
+      //   }
+      //   kontenData.add(row);
+      // }
+
+      for (int i = 0; i < jmlHorvar; i++) {
+        final List<String> row = [];
+        for (int j = 0; j < jmlVerVar; j++) {
+          final iddata = jsonData["var"][0]["id_tabel"].toString() +
+              jsonData["ver_var"][j]["id_vervar"].toString() +
+              jsonData["hor_var"][i]["id_horvar"].toString();
+          final data = (jsonData["data_content"][iddata] != null)
+              ? jsonData["data_content"][iddata]
+              : '-';
+          row.add(data.toString());
+          // for (int k = 0; k < jmlTurVar; k++) {
+          //   for (int l = 0; l < jmlTurTahun; l++) {
+          //     final iddata = jsonData["vervar"][j]["val"].toString() +
+          //         idVar.toString() +
+          //         jsonData["turvar"][k]["val"].toString() +
+          //         jsonData["tahun"][i]["val"].toString() +
+          //         jsonData["turtahun"][l]["val"].toString();
+          //     final data = (jsonData["datacontent"][iddata] != null)
+          //         ? jsonData["datacontent"][iddata]
+          //         : '-';
+          //     row.add(data.toString());
+          //   }
+          // }
+        }
+        _kontenData.add(row);
+      }
+      judulBaris = _judulBaris;
+      judulKolom = _judulKolom;
+      kontenData = _kontenData;
     }
   }
+
+  final Map<String, Map<String, List<String>>> _dropDownMenu = {
+    'BPS': {
+      '1026': ['1', '1026', 'Inflasi Kota Pangkalpinang'],
+      '1054': ['1', '1054', 'Inflasi Kota Tanjungpandan'],
+      '1055': ['1', '1055', 'Inflasi Gabungan 2 Kota'],
+      '51': ['1', '51', 'Laju Pertumbuhan PDRB Menurut Lapangan Usaha'],
+      '1052': ['1', '1052', 'Laju Pertumbuhan PDRB Menurut Pengeluaran'],
+    },
+    'Dinas Pertanian dan Ketahanan Pangan': {
+      '2': [
+        '2',
+        '2',
+        'Prognosa Ketersediaan dan Kebutuhan Konsumsi Beras (Realisasi Januari - Juli 2023)'
+      ],
+      '3': [
+        '2',
+        '3',
+        'Prognosa Ketersediaan dan Kebutuhan Konsumsi Beras (Potensi Agustus s.d. Oktober 2023)'
+      ],
+      '4': [
+        '2',
+        '4',
+        'Prognosa Ketersediaan dan Kebutuhan Konsumsi Beras (Prognosa Januari s.d. Desember 2023)'
+      ],
+      '5': [
+        '2',
+        '5',
+        'Prognosa Ketersediaan dan Kebutuhan Pangan Januari s.d. Desember 2023 (Angka Sementara dan Proyeksi)'
+      ]
+    },
+    'Dinas Perhubungan': {
+      '1': [
+        '2',
+        '1',
+        'Subsidi Angkutan Umum untuk Jasa Angkutan Orang dan/atau Barang Antar Kota dalam 1 (satu) Daerah Provinsi Tahun 2023'
+      ],
+    },
+  };
+
+  String? _selectedKey;
+  String? _selectedItem;
 
   final List<String> instansi = [
     'BPS',
@@ -109,11 +274,10 @@ class _DataState extends State<Data> {
 
   String? selectedValueDinas;
 
-  final List<String> indikator = [
-    'Inflasi ',
-    'Pertumbuhan Ekonomi',
-    'Kemiskinan',
-    'Ketenagakerjaan',
+  final List<List<String>> indikatorBPS = [
+    ['1026', 'Inflasi Kota Pangkalpinang'],
+    ['1054', 'Inflasi Kota Tanjungpandan'],
+    ['1055', 'Inflasi Gabungan 2 Kota'],
   ];
 
   Widget table() {
@@ -274,26 +438,46 @@ class _DataState extends State<Data> {
                         ),
                       ],
                     ),
-                    items: instansi
-                        .map(
-                          (String item) => DropdownMenuItem<String>(
-                            value: item,
-                            child: Text(
-                              item,
-                              style: const TextStyle(
-                                color: Color.fromARGB(255, 58, 58, 58),
-                                fontSize: 13,
-                              ),
-                            ),
-                          ),
-                        )
-                        .toList(),
-                    value: selectedValueDinas,
+                    // items: instansi
+                    //     .map(
+                    //       (String item) => DropdownMenuItem<String>(
+                    //         value: item,
+                    //         child: Text(
+                    //           item,
+                    //           style: const TextStyle(
+                    //             color: Color.fromARGB(255, 58, 58, 58),
+                    //             fontSize: 13,
+                    //           ),
+                    //         ),
+                    //       ),
+                    //     )
+                    //     .toList(),
+                    // value: selectedValueDinas,
+                    // onChanged: (value) {
+                    //   setState(() {
+                    //     selectedValueDinas = value;
+                    //   });
+                    // },
+                    value: _selectedKey,
                     onChanged: (value) {
                       setState(() {
-                        selectedValueDinas = value;
+                        _selectedKey = value;
+                        _selectedItem = null;
+                        isVisible = false;
                       });
                     },
+                    items: _dropDownMenu.keys
+                        .map<DropdownMenuItem<String>>((String value) {
+                      return DropdownMenuItem<String>(
+                        value: value,
+                        child: Text(
+                          value,
+                          style: const TextStyle(
+                            fontSize: 13,
+                          ),
+                        ),
+                      );
+                    }).toList(),
                     buttonStyleData: ButtonStyleData(
                       height: 45,
                       padding: const EdgeInsets.only(right: 14),
@@ -318,255 +502,340 @@ class _DataState extends State<Data> {
                   ),
                 ),
               ),
-              Padding(
-                padding: const EdgeInsets.only(left: 15, right: 15, bottom: 10),
-                child: DropdownButtonHideUnderline(
-                  child: DropdownButton2<String>(
-                    isExpanded: true,
-                    hint: const Row(
-                      children: [
-                        Expanded(
-                          child: Text(
-                            'Pilih Indikator',
-                            style: TextStyle(
-                              color: Colors.grey,
-                              fontSize: 13,
+              _selectedKey != null
+                  ? Padding(
+                      padding: const EdgeInsets.only(
+                          left: 15, right: 15, bottom: 10),
+                      child: DropdownButtonHideUnderline(
+                        child: DropdownButton2<String>(
+                          isExpanded: true,
+                          hint: const Row(
+                            children: [
+                              Expanded(
+                                child: Text(
+                                  'Pilih Indikator',
+                                  style: TextStyle(
+                                    color: Colors.grey,
+                                    fontSize: 13,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                          // items: indikator
+                          //     .map(
+                          //       (String item) => DropdownMenuItem<String>(
+                          //         value: item,
+                          //         child: Text(
+                          //           item,
+                          //           style: const TextStyle(
+                          //             color: Color.fromARGB(255, 58, 58, 58),
+                          //             fontSize: 13,
+                          //           ),
+                          //         ),
+                          //       ),
+                          //     )
+                          //     .toList(),
+                          // value: selectedValueIndikator,
+                          // onChanged: (value) {
+                          //   setState(() {
+                          //     selectedValueIndikator = value;
+                          //   });
+                          //   visibility = true;
+                          // },
+                          value: _selectedItem,
+                          onChanged: (value) {
+                            setState(() {
+                              _selectedItem = value;
+                              isVisible = true;
+
+                              var _idData =
+                                  _dropDownMenu[_selectedKey]!.keys.firstWhere(
+                                        (k) => _dropDownMenu[_selectedKey]![k]!
+                                            .contains(value),
+                                        orElse: () => "1",
+                                      );
+
+                              var _kodeAPI =
+                                  _dropDownMenu[_selectedKey]![_idData]![0];
+                              clearData();
+
+                              idData = _idData;
+                              kodeAPI = _kodeAPI;
+                              getData(idData, kodeAPI);
+                            });
+                          },
+                          items: _dropDownMenu[_selectedKey]!
+                              .values
+                              .map<DropdownMenuItem<String>>(
+                                  (List<String> value) {
+                            return DropdownMenuItem<String>(
+                              value: value[1],
+                              child: Text(
+                                value[2],
+                                style: const TextStyle(
+                                  fontSize: 13,
+                                ),
+                                maxLines: 2,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            );
+                          }).toList(),
+                          buttonStyleData: ButtonStyleData(
+                            height: 45,
+                            padding: const EdgeInsets.only(right: 14),
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(12),
+                              color: Colors.white,
+                            ),
+                            elevation: 0,
+                          ),
+                          dropdownStyleData: DropdownStyleData(
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(12),
+                              color: Colors.white,
+                            ),
+                            //offset: const Offset(-20, 0),
+                            scrollbarTheme: ScrollbarThemeData(
+                              radius: const Radius.circular(40),
+                              thickness: MaterialStateProperty.all(6),
+                              thumbVisibility: MaterialStateProperty.all(true),
                             ),
                           ),
                         ),
-                      ],
-                    ),
-                    items: indikator
-                        .map(
-                          (String item) => DropdownMenuItem<String>(
-                            value: item,
-                            child: Text(
-                              item,
-                              style: const TextStyle(
-                                color: Color.fromARGB(255, 58, 58, 58),
-                                fontSize: 13,
-                              ),
-                            ),
-                          ),
-                        )
-                        .toList(),
-                    value: selectedValueIndikator,
-                    onChanged: (value) {
-                      setState(() {
-                        selectedValueIndikator = value;
-                      });
-                      visibility = true;
-                    },
-                    buttonStyleData: ButtonStyleData(
-                      height: 45,
-                      padding: const EdgeInsets.only(right: 14),
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(12),
-                        color: Colors.white,
                       ),
-                      elevation: 0,
-                    ),
-                    dropdownStyleData: DropdownStyleData(
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(12),
-                        color: Colors.white,
-                      ),
-                      //offset: const Offset(-20, 0),
-                      scrollbarTheme: ScrollbarThemeData(
-                        radius: const Radius.circular(40),
-                        thickness: MaterialStateProperty.all(6),
-                        thumbVisibility: MaterialStateProperty.all(true),
-                      ),
-                    ),
-                  ),
-                ),
-              ),
+                    )
+                  : Container(),
               Expanded(
-                child: Container(
-                  decoration: const BoxDecoration(
-                    borderRadius: BorderRadius.only(
-                      topLeft: Radius.circular(12),
-                      topRight: Radius.circular(12),
+                child: Visibility(
+                  visible: isVisible,
+                  child: Container(
+                    decoration: const BoxDecoration(
+                      borderRadius: BorderRadius.only(
+                        topLeft: Radius.circular(12),
+                        topRight: Radius.circular(12),
+                      ),
+                      color: Colors.white,
                     ),
-                    color: Colors.white,
-                  ),
-                  child: FutureBuilder(
-                    future: getData(),
-                    builder: (context, snapshot) {
-                      if (snapshot.connectionState == ConnectionState.done) {
-                        return Container(
-                          decoration: const BoxDecoration(
-                            borderRadius: BorderRadius.only(
-                              topLeft: Radius.circular(12),
-                              topRight: Radius.circular(12),
+                    child: FutureBuilder(
+                      future: getData(idData, kodeAPI),
+                      builder: (context, snapshot) {
+                        if (snapshot.connectionState == ConnectionState.done) {
+                          return Container(
+                            decoration: const BoxDecoration(
+                              borderRadius: BorderRadius.only(
+                                topLeft: Radius.circular(12),
+                                topRight: Radius.circular(12),
+                              ),
+                              color: Colors.white,
                             ),
-                            color: Colors.white,
-                          ),
-                          child: Column(
-                            children: [
-                              const SizedBox(
-                                height: 20,
-                              ),
-                              Padding(
-                                padding: const EdgeInsets.all(10.0),
-                                child: Center(
-                                  child: Text(
-                                      jsonData["var"][0]["label"].toString()),
+                            child: Column(
+                              children: [
+                                const SizedBox(
+                                  height: 20,
                                 ),
-                              ),
-                              Expanded(
-                                // child: ListView.builder(
-                                //   itemCount: judulKolom.length,
-                                //   itemBuilder: (context, index) {
-                                //     return ListTile(
-                                //       title: Text(judulKolom[index].toString()),
-                                //     );
-                                //   },
-                                // ),
-                                child: Padding(
+                                Padding(
                                   padding: const EdgeInsets.all(10.0),
-                                  child: StickyHeadersTable(
-                                    columnsLength: judulKolom.length,
-                                    rowsLength: judulBaris.length,
-                                    columnsTitleBuilder: (i) => Container(
-                                      width: scrWidth / 3,
-                                      height: 80,
-                                      decoration: const BoxDecoration(
-                                        border: Border(
-                                          left: BorderSide(color: Colors.white),
-                                          right:
-                                              BorderSide(color: Colors.white),
-                                          bottom:
-                                              BorderSide(color: Colors.white),
-                                          top: BorderSide(color: Colors.white),
-                                        ),
-                                        color: Color(0xFF659dd4),
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.center,
+                                    children: [
+                                      Text(
+                                        '$judul $unit',
+                                        style: const TextStyle(
+                                            fontWeight: FontWeight.bold),
+                                        textAlign: TextAlign.center,
                                       ),
-                                      child: Column(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.center,
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.center,
-                                        children: <Widget>[
-                                          Text(
-                                            judulKolom[i],
-                                            style: const TextStyle(
-                                              fontWeight: FontWeight.bold,
-                                              color: Colors.white,
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                    rowsTitleBuilder: (i) => Container(
-                                      padding: const EdgeInsets.only(left: 10),
-                                      width: scrWidth / 3,
-                                      height: 70,
-                                      decoration: const BoxDecoration(
-                                        border: Border(
-                                          left:
-                                              BorderSide(color: Colors.black26),
-                                          right:
-                                              BorderSide(color: Colors.black26),
-                                          bottom:
-                                              BorderSide(color: Colors.black26),
-                                        ),
-                                      ),
-                                      child: Column(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.center,
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: <Widget>[
-                                          Text(
-                                            judulBaris[i],
-                                            style: const TextStyle(
-                                                fontWeight: FontWeight.bold),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                    contentCellBuilder: (i, j) => Container(
-                                      width: scrWidth / 3,
-                                      height: 70,
-                                      decoration: const BoxDecoration(
-                                        border: Border(
-                                          right:
-                                              BorderSide(color: Colors.black26),
-                                          bottom:
-                                              BorderSide(color: Colors.black26),
-                                        ),
-                                      ),
-                                      child: Column(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.center,
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.center,
-                                        children: <Widget>[
-                                          Text(kontenData[i][j]),
-                                        ],
-                                      ),
-                                    ),
-                                    legendCell: Container(
-                                      width: scrWidth / 3,
-                                      height: 80,
-                                      decoration: const BoxDecoration(
-                                        border: Border(
-                                          left: BorderSide(color: Colors.white),
-                                          right:
-                                              BorderSide(color: Colors.white),
-                                          bottom:
-                                              BorderSide(color: Colors.white),
-                                          top: BorderSide(color: Colors.white),
-                                        ),
-                                        color: Color(0xFF659dd4),
-                                      ),
-                                      child: Column(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.center,
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.center,
-                                        children: <Widget>[
-                                          Padding(
-                                            padding: const EdgeInsets.all(3.0),
-                                            child: Text(
-                                              labelJudulBaris,
-                                              style: const TextStyle(
-                                                fontWeight: FontWeight.bold,
-                                                color: Colors.white,
-                                              ),
-                                              textAlign: TextAlign.center,
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                    cellDimensions: CellDimensions.fixed(
-                                      contentCellWidth: scrWidth / 3,
-                                      contentCellHeight: 70,
-                                      stickyLegendWidth: scrWidth / 3,
-                                      stickyLegendHeight: 80,
-                                    ),
-                                    cellAlignments: const CellAlignments.fixed(
-                                      contentCellAlignment: Alignment.center,
-                                      stickyColumnAlignment:
-                                          Alignment.centerLeft,
-                                      stickyRowAlignment: Alignment.center,
-                                      stickyLegendAlignment: Alignment.center,
-                                    ),
+                                    ],
                                   ),
                                 ),
-                                // child: table(),
-                              )
-                            ],
-                          ),
-                        );
-                      } else {
-                        return const Center(
-                          child: CircularProgressIndicator(),
-                        );
-                      }
-                    },
+                                Expanded(
+                                  // child: ListView.builder(
+                                  //   itemCount: judulKolom.length,
+                                  //   itemBuilder: (context, index) {
+                                  //     return ListTile(
+                                  //       title: Text(judulKolom[index].toString()),
+                                  //     );
+                                  //   },
+                                  // ),
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(10.0),
+                                    child: StickyHeadersTable(
+                                      columnsLength: judulKolom.length,
+                                      rowsLength: judulBaris.length,
+                                      columnsTitleBuilder: (i) => Container(
+                                        width: scrWidth / 3,
+                                        height: 80,
+                                        decoration: const BoxDecoration(
+                                          border: Border(
+                                            left:
+                                                BorderSide(color: Colors.white),
+                                            right:
+                                                BorderSide(color: Colors.white),
+                                            bottom:
+                                                BorderSide(color: Colors.white),
+                                            top:
+                                                BorderSide(color: Colors.white),
+                                          ),
+                                          color: Color(0xFF659dd4),
+                                        ),
+                                        child: Column(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.center,
+                                          children: <Widget>[
+                                            Padding(
+                                              padding:
+                                                  const EdgeInsets.symmetric(
+                                                horizontal: 3,
+                                              ),
+                                              child: Text(
+                                                judulKolom[i],
+                                                style: const TextStyle(
+                                                  fontWeight: FontWeight.bold,
+                                                  color: Colors.white,
+                                                ),
+                                                maxLines: 3,
+                                                overflow: TextOverflow.ellipsis,
+                                                textAlign: TextAlign.center,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                      rowsTitleBuilder: (i) => Container(
+                                        padding: const EdgeInsets.only(
+                                          left: 10,
+                                          right: 5,
+                                        ),
+                                        width: scrWidth / 3,
+                                        height: 70,
+                                        decoration: const BoxDecoration(
+                                          border: Border(
+                                            left: BorderSide(
+                                                color: Colors.black26),
+                                            right: BorderSide(
+                                                color: Colors.black26),
+                                            bottom: BorderSide(
+                                                color: Colors.black26),
+                                          ),
+                                        ),
+                                        child: Column(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: <Widget>[
+                                            Text(
+                                              judulBaris[i],
+                                              style: const TextStyle(
+                                                fontWeight: FontWeight.bold,
+                                                fontStyle: FontStyle.italic,
+                                              ),
+                                              maxLines: 3,
+                                              overflow: TextOverflow.ellipsis,
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                      contentCellBuilder: (i, j) => Container(
+                                        width: scrWidth / 3,
+                                        height: 70,
+                                        decoration: const BoxDecoration(
+                                          border: Border(
+                                            right: BorderSide(
+                                                color: Colors.black26),
+                                            bottom: BorderSide(
+                                                color: Colors.black26),
+                                          ),
+                                        ),
+                                        child: Column(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.center,
+                                          children: <Widget>[
+                                            Padding(
+                                              padding:
+                                                  const EdgeInsets.symmetric(
+                                                horizontal: 3,
+                                              ),
+                                              child: Text(
+                                                kontenData[i][j],
+                                                maxLines: 3,
+                                                overflow: TextOverflow.ellipsis,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                      legendCell: Container(
+                                        width: scrWidth / 3,
+                                        height: 80,
+                                        decoration: const BoxDecoration(
+                                          border: Border(
+                                            left:
+                                                BorderSide(color: Colors.white),
+                                            right:
+                                                BorderSide(color: Colors.white),
+                                            bottom:
+                                                BorderSide(color: Colors.white),
+                                            top:
+                                                BorderSide(color: Colors.white),
+                                          ),
+                                          color: Color(0xFF659dd4),
+                                        ),
+                                        child: Column(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.center,
+                                          children: <Widget>[
+                                            Padding(
+                                              padding:
+                                                  const EdgeInsets.all(3.0),
+                                              child: Text(
+                                                labelJudulBaris,
+                                                style: const TextStyle(
+                                                  fontWeight: FontWeight.bold,
+                                                  color: Colors.white,
+                                                ),
+                                                textAlign: TextAlign.center,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                      cellDimensions: CellDimensions.fixed(
+                                        contentCellWidth: scrWidth / 3,
+                                        contentCellHeight: 70,
+                                        stickyLegendWidth: scrWidth / 3,
+                                        stickyLegendHeight: 80,
+                                      ),
+                                      cellAlignments:
+                                          const CellAlignments.fixed(
+                                        contentCellAlignment: Alignment.center,
+                                        stickyColumnAlignment:
+                                            Alignment.centerLeft,
+                                        stickyRowAlignment: Alignment.center,
+                                        stickyLegendAlignment: Alignment.center,
+                                      ),
+                                    ),
+                                  ),
+                                  // child: table(),
+                                )
+                              ],
+                            ),
+                          );
+                        } else {
+                          return const Center(
+                            child: CircularProgressIndicator(),
+                          );
+                        }
+                      },
+                    ),
                   ),
                 ),
               ),

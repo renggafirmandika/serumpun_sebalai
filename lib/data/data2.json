@@ -1,0 +1,114 @@
+{
+    "var": [
+        {
+            "id_tabel": "1",
+            "nama_tabel": "Subsidi Angkutan Umum untuk Jasa Angkutan Orang dan\/atau Barang Antar Kota dalam 1 (satu) Daerah Provinsi Tahun 2023"
+        }
+    ],
+    "label_vervar": [
+        {
+            "id_tabel": "1",
+            "label_vervar": "Tujuan Distribusi Barang"
+        }
+    ],
+    "ver_var": [
+        {
+            "id_vervar": "2",
+            "nama_vervar": "Bangka"
+        },
+        {
+            "id_vervar": "3",
+            "nama_vervar": "Belitung"
+        },
+        {
+            "id_vervar": "4",
+            "nama_vervar": "Bangka Barat"
+        },
+        {
+            "id_vervar": "5",
+            "nama_vervar": "Bangka Tengah"
+        },
+        {
+            "id_vervar": "6",
+            "nama_vervar": "Bangka Selatan"
+        },
+        {
+            "id_vervar": "7",
+            "nama_vervar": "Belitung Timur"
+        },
+        {
+            "id_vervar": "8",
+            "nama_vervar": "Pangkalpinang"
+        }
+    ],
+    "hor_var": [
+        {
+            "id_horvar": "1",
+            "nama_horvar": "Tanggal"
+        },
+        {
+            "id_horvar": "2",
+            "nama_horvar": "Jumlah \/Satuan"
+        },
+        {
+            "id_horvar": "3",
+            "nama_horvar": "Volume \/Satuan"
+        },
+        {
+            "id_horvar": "4",
+            "nama_horvar": "Berat Total \/Kg"
+        },
+        {
+            "id_horvar": "5",
+            "nama_horvar": "Jumlah Kendaraan"
+        },
+        {
+            "id_horvar": "6",
+            "nama_horvar": "Keterangan"
+        }
+    ],
+    "data_content": {
+        "181": "22 Agustus 2023",
+        "182": "2.000 paket",
+        "183": "33 kg",
+        "184": "66.000",
+        "185": "10 truk",
+        "186": "Terlaksana",
+        "121": "18 September 2023",
+        "122": "4.000 paket",
+        "123": "33 kg",
+        "124": "132.000",
+        "125": "20 truk",
+        "126": "Terlaksana",
+        "141": "12 Juli 2023",
+        "142": "3.000 paket",
+        "143": "33 kg",
+        "144": "99.000",
+        "145": "15 truk",
+        "146": "Terlaksana",
+        "131": "02 Agustus 2023",
+        "132": "3.000 paket",
+        "133": "33 kg",
+        "134": "99.000",
+        "135": "15 truk",
+        "136": "Terlaksana",
+        "161": "10 Agustus 2023",
+        "162": "4.000 paket",
+        "163": "33 kg",
+        "164": "132.000",
+        "165": "20 truk",
+        "166": "Terlaksana",
+        "171": "06 September 2023",
+        "172": "4.000 paket",
+        "173": "33 kg",
+        "174": "132.000",
+        "175": "20 truk",
+        "176": "Terlaksana",
+        "151": "25 September 2023",
+        "152": "3.000 paket",
+        "153": "33 kg",
+        "154": "99.000",
+        "155": "15 truk",
+        "156": "Terlaksana"
+    }
+}
